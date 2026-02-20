@@ -7,7 +7,6 @@ from decorators import broadcast, rolling, available
 from indicators import rsi, bb_lower, bb_middle, bb_upper
 from util import access_case_insensitive
 from metrics import Metrics
-from data_loader import get_price, get_fundamental
 class CustomStrategy(Strategy):
     """
     Multiple stock with technical and fundamental indicators
@@ -38,12 +37,9 @@ class CustomStrategy(Strategy):
             }
         
         # Load price data for our symbols
-        
-        price_data = get_price(self.param['symbols'], data_source='US_stock', items=['close', 'high', 'low', 'open'])
-        
-        # Store the price data in self.data - handle case sensitivity
+        # Each CSV has a DatetimeIndex and symbol names as columns
         for item in ['close', 'high', 'low', 'open']:
-            self.data[item] = price_data[item]
+            self.data[item] = pd.read_csv(f"{item}.csv", index_col=0, parse_dates=True)
         
         # Calculate RSI indicator and store in self.data
         self.data['rsi'] = rsi(self.data['close'], period=self.param['rsi_period'])

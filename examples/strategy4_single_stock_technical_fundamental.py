@@ -6,7 +6,6 @@ from typing import Dict, Any
 from decorators import broadcast, rolling, available
 from indicators import sma, rsi
 from util import access_case_insensitive
-from data_loader import get_price, get_fundamental
 from metrics import Metrics
 START_DATE='2022-01-01'
 END_DATE='2023-12-31'
@@ -36,8 +35,8 @@ class CustomStrategy(Strategy):
             }
         
         # Load price data for our symbol
-        price_data = get_price(self.param['symbol'], data_source='US_stock', items=['open', 'high', 'low', 'close'], start_date=START_DATE, end_date=END_DATE)
-        
+        price_data = pd.read_csv(f"{self.param['symbol']}.csv", index_col=0, parse_dates=True)
+
         # Store the price data in self.data
         for item in price_data.keys():
             self.data[item] = price_data[item]

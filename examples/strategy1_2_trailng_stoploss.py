@@ -6,7 +6,6 @@ from typing import Dict, Any
 from decorators import broadcast, rolling
 from indicators import sma, rsi
 from util import access_case_insensitive
-from data_loader import get_price
 from metrics import Metrics
 
 
@@ -38,7 +37,7 @@ class CustomStrategy(Strategy):
                 'investment_percentage': 0.10
             }
         # Load price data fields
-        self.data = get_price(self.param['symbol'], data_source='US_stock')
+        self.data = pd.read_csv(f"{self.param['symbol']}.csv", index_col=0, parse_dates=True)
         # Calculate SMA indicator and store in self.data
         self.data['sma'] = sma(self.data['close'], period=self.param['sma_period'])
         

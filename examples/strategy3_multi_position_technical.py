@@ -6,7 +6,6 @@ from typing import Dict, Any, List
 from decorators import broadcast, rolling
 from indicators import sma, rsi, bb_upper, bb_middle, bb_lower
 from util import access_case_insensitive
-from data_loader import get_price
 from metrics import Metrics
 
 class CustomStrategy(Strategy):
@@ -45,9 +44,9 @@ class CustomStrategy(Strategy):
         self.last_buy_date = None
         
         # Load price data for our symbols
-        price_data = get_price(self.param['symbols'], data_source='US_stock', items=['close', 'high', 'low', 'open'])
-        for item in price_data.keys():
-            self.data[item] = price_data[item]
+        # Each CSV has a DatetimeIndex and symbol names as columns
+        for item in ['close', 'high', 'low', 'open']:
+            self.data[item] = pd.read_csv(f"{item}.csv", index_col=0, parse_dates=True)
         
         # Calculate technical indicators and store in self.data
         self.data['sma_short'] = sma(self.data['close'], period=self.param['sma_short_period'])

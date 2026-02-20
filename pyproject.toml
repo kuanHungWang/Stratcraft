@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "stratcraft"
+version = "0.1.0"
+description = "A Python backtesting framework for quantitative trading strategies"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Kuan-Hung Wang" }
+]
+keywords = ["backtesting", "trading", "quantitative finance", "strategy", "algorithmic trading"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Financial and Insurance Industry",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = [
+    "pandas>=1.5.0",
+    "numpy>=1.23.0",
+    "plotly>=5.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov",
+    "build",
+    "twine",
+]
+
+[project.urls]
+Homepage = "https://github.com/kuanhungwang/stratcraft"
+Repository = "https://github.com/kuanhungwang/stratcraft"
+"Bug Tracker" = "https://github.com/kuanhungwang/stratcraft/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["stratcraft*"]
+exclude = ["tests*", "examples*", ".venv*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.md"]

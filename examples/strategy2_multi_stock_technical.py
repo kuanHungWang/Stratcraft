@@ -5,7 +5,6 @@ from datetime import datetime
 from typing import Dict, Any, List
 from decorators import broadcast, rolling
 from util import access_case_insensitive
-from data_loader import get_price
 import time
 import talib
 from talib import MA_Type
@@ -66,19 +65,10 @@ class CustomStrategy(Strategy):
             }
 
         # Load price data for our symbols
-
-        
+        # Each CSV has a DatetimeIndex and symbol names as columns
         # Load price data for multiple items
-        price_data = get_price(
-            tickers=self.param['symbols'],
-            data_source='US_stock',
-            items=['close', 'high', 'low', 'open'],
-            start_date='2022-01-01',
-            end_date='2023-12-31'
-        )
-        
-        # Store data in the strategy object
-        self.data = price_data
+        for field in ['close', 'high', 'low', 'open']:
+            self.data[field] = pd.read_csv(f"{field}.csv", index_col=0, parse_dates=True)
         print(f"self.data.keys(): {self.data.keys()}")
         
 

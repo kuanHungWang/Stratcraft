@@ -6,7 +6,6 @@ from typing import Dict, Any, List
 from decorators import broadcast, rolling, available
 from indicators import rsi, bb_lower, bb_middle, bb_upper
 from util import access_case_insensitive
-from data_loader import get_price, get_stock_list
 from metrics import Metrics
 
 class CustomStrategy(Strategy):
@@ -25,15 +24,14 @@ class CustomStrategy(Strategy):
     def initialize(self):
         start_date = datetime(2023, 1, 1)
         end_date = datetime(2023, 12, 31)
-        sp500_list=get_stock_list(component_of='sp500')
-        price=get_price(sp500_list, data_source='US_stock', start_date=start_date, end_date=end_date)
+        # Each CSV has a DatetimeIndex and SP500 symbol names as columns
         for item in ['close', 'high', 'low', 'open']:
-            self.data[item] = price[item]
+            self.data[item] = pd.read_csv(f"sp500_{item}.csv", index_col=0, parse_dates=True)
 
-        index_price=get_price(['sp_500_index'], data_source='US_index', items=['close'], start_date=start_date, end_date=end_date)['close']
+        index_price=pd.read_csv("sp500_index.csv", index_col=0, parse_dates=True)['close']
 
-        index_price = index_price.reindex(price['close'].index)
-        self.data['index_close'] = index_price['sp_500_index']
+        index_price = index_price.reindex(self.data['close'].index)
+        self.data['index_close'] = index_price
 
         @broadcast
         @rolling(window=20)

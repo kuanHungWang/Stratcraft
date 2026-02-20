@@ -14,9 +14,13 @@ A Python backtesting framework for building and evaluating quantitative trading 
 
 ## Installation
 
+Install from PyPI:
+
 ```bash
 pip install stratcraft
 ```
+
+[![PyPI version](https://badge.fury.io/py/stratcraft.svg)](https://badge.fury.io/py/stratcraft)
 
 Or install from source:
 

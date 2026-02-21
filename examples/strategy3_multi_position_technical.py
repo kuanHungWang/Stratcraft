@@ -3,10 +3,10 @@ import pandas as pd
 import numpy as np
 from datetime import datetime, timedelta
 from typing import Dict, Any, List
-from decorators import broadcast, rolling
+from stratcraft.decorators import broadcast, rolling
 from indicators import sma, rsi, bb_upper, bb_middle, bb_lower
-from util import access_case_insensitive
-from metrics import Metrics
+from stratcraft import access_case_insensitive
+from stratcraft import Metrics
 
 class CustomStrategy(Strategy):
     """
@@ -45,8 +45,9 @@ class CustomStrategy(Strategy):
         
         # Load price data for our symbols
         # Each CSV has a DatetimeIndex and symbol names as columns
-        for item in ['close', 'high', 'low', 'open']:
-            self.data[item] = pd.read_csv(f"{item}.csv", index_col=0, parse_dates=True)
+        for field in ['close', 'high', 'low', 'open']:
+            self.data[field] = pd.read_csv(f"{field}.csv", index_col=0, parse_dates=True)[self.param['symbols']]
+
         
         # Calculate technical indicators and store in self.data
         self.data['sma_short'] = sma(self.data['close'], period=self.param['sma_short_period'])

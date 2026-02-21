@@ -3,12 +3,12 @@ import numpy as np
 from stratcraft import Strategy
 from datetime import datetime
 from typing import Dict, Any, List
-from decorators import broadcast, rolling
-from util import access_case_insensitive
+from stratcraft.decorators import broadcast, rolling
+from stratcraft import access_case_insensitive
 import time
 import talib
 from talib import MA_Type
-from metrics import Metrics
+from stratcraft import Metrics
 
 @broadcast
 def rsi(data, period=14):
@@ -68,10 +68,7 @@ class CustomStrategy(Strategy):
         # Each CSV has a DatetimeIndex and symbol names as columns
         # Load price data for multiple items
         for field in ['close', 'high', 'low', 'open']:
-            self.data[field] = pd.read_csv(f"{field}.csv", index_col=0, parse_dates=True)
-        print(f"self.data.keys(): {self.data.keys()}")
-        
-
+            self.data[field] = pd.read_csv(f"{field}.csv", index_col=0, parse_dates=True)[self.param['symbols']]
 
         
         # Calculate SMA

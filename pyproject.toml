@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stratcraft"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python backtesting framework for quantitative trading strategies"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [
     { name = "Kuan-Hung Wang" }
 ]
-keywords = ["backtesting", "trading", "quantitative finance", "strategy", "algorithmic trading"]
+keywords = ["backtesting", "trading", "quantitative finance", "strategy", "algorithmic trading", "quant", "finance", "stock", "forex", "portfolio", "technical analysis", "systematic trading"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Financial and Insurance Industry",
@@ -46,7 +46,7 @@ Repository = "https://github.com/kuanhungwang/stratcraft"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["stratcraft*"]
+include = ["stratcraft", "stratcraft.*"]
 exclude = ["tests*", "examples*", ".venv*"]
 
 [tool.setuptools.package-data]

@@ -3,16 +3,16 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import Dict, Any, List
-from decorators import broadcast, rolling, available
+from stratcraft.decorators import broadcast, rolling, available
 from indicators import rsi, bb_lower, bb_middle, bb_upper
-from util import access_case_insensitive
-from metrics import Metrics
+from stratcraft import access_case_insensitive
+from stratcraft import Metrics
 class CustomStrategy(Strategy):
     """
     Multiple stock with technical and fundamental indicators
     
 
-    - stock pool: ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'AMD', 'INTC', 'IBM']
+    - stock pool: ['AAPL', 'MSFT', 'GOOGL', 'META', 'TSLA', 'NVDA', 'INTC', 'IBM']
     - Uses fundamental data to screen stocks (quarterly EBITDA growth >0)
     - Amoung qualified stocks, Buys the stock with highest RSI(14)
     - Invest 50% of available cash each time.
@@ -26,7 +26,7 @@ class CustomStrategy(Strategy):
         # Define parameters
         if not self.param:
             self.param = {
-                'symbols': ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'META', 'TSLA', 'NVDA', 'AMD', 'INTC', 'IBM'],
+                'symbols': ['AAPL', 'MSFT', 'GOOGL',  'META', 'TSLA', 'NVDA', 'INTC', 'IBM'],
                 'rsi_period': 14,
                 'stop_loss_percent': 5.0,
                 'take_profit_percent': 10.0,
@@ -38,14 +38,17 @@ class CustomStrategy(Strategy):
         
         # Load price data for our symbols
         # Each CSV has a DatetimeIndex and symbol names as columns
-        for item in ['close', 'high', 'low', 'open']:
-            self.data[item] = pd.read_csv(f"{item}.csv", index_col=0, parse_dates=True)
+        for field in ['close', 'high', 'low', 'open']:
+            self.data[field] = pd.read_csv(f"{field}.csv", index_col=0, parse_dates=True)[self.param['symbols']]
+
         
         # Calculate RSI indicator and store in self.data
         self.data['rsi'] = rsi(self.data['close'], period=self.param['rsi_period'])
         
         # Load fundamental data - EBITDA and Revenue
-        fundamental_data = get_fundamental(self.param['symbols'], ['is_ebitda', 'is_revenue', 'fillingDate'])
+        is_ibitda = pd.read_csv('is_ebitda.csv', index_col=0, parse_dates=True)[self.param['symbols']]
+        fillingDates = pd.read_csv('fillingDate.csv', index_col=0, parse_dates=True)[self.param['symbols']]
+        print(fillingDates)
         # Important: Do not store the fundamental data in self.data as it has different index, may case warning and error.
         # Just use it as intermediate variable to calculate indicators, or use broadcast decorator to align index to daily price data.
         @broadcast()
@@ -54,7 +57,7 @@ class CustomStrategy(Strategy):
             return (ebitda.iloc[-1] - ebitda.iloc[-2]) / abs(ebitda.iloc[-2])
 
         # Calculate Revenue growth (quarter-over-quarter)
-        self.data['revenue_growth'] = calculate_revenue_growth(fundamental_data['is_revenue'], available_date=fundamental_data['fillingDate'])
+        self.data['revenue_growth'] = calculate_revenue_growth(is_ibitda, available_date=fillingDates)
         self.data['screen_ebitda'] = self.data['revenue_growth'] > 0
 
 

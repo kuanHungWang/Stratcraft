@@ -1,5 +1,9 @@
 # StratCraft
 
+[![PyPI version](https://badge.fury.io/py/stratcraft.svg)](https://badge.fury.io/py/stratcraft)
+[![Python](https://img.shields.io/pypi/pyversions/stratcraft.svg)](https://pypi.org/project/stratcraft)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A Python backtesting framework for building and evaluating quantitative trading strategies. StratCraft provides a clean, decorator-based API for defining indicators, handling multi-symbol data, and running event-driven backtests with portfolio tracking and performance analytics.
 
 ## Features
@@ -19,8 +23,6 @@ Install from PyPI:
 ```bash
 pip install stratcraft
 ```
-
-[![PyPI version](https://badge.fury.io/py/stratcraft.svg)](https://badge.fury.io/py/stratcraft)
 
 Or install from source:
 

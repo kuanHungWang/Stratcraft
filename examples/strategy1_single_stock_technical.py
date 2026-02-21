@@ -3,10 +3,10 @@ import pandas as pd
 from datetime import datetime
 import json
 from typing import Dict, Any
-from decorators import broadcast, rolling
+from stratcraft.decorators import broadcast, rolling
 from indicators import sma, rsi
-from util import access_case_insensitive
-from metrics import Metrics
+from stratcraft import access_case_insensitive
+from stratcraft import Metrics
 
 
 
@@ -24,14 +24,15 @@ class CustomStrategy(Strategy):
         """Initialize the strategy with data and indicators"""
         if not self.param:
             self.param = {
-                'symbol': 'BAC',
+                'symbol': 'AAPL',
                 'sma_period': 20,
                 'stop_loss_percent': 5.0,
                 'take_profit_percent': 10.0,
                 'investment_percentage': 0.10
             }
         # Load price data fields
-        self.data = pd.read_csv(f"{self.param['symbol']}.csv", index_col=0, parse_dates=True)
+        files = {'close': 'open_AAPL.csv', 'high': 'high_AAPL.csv', 'low': 'low_AAPL.csv', 'open': 'open_AAPL.csv'}
+        self.data = {key: pd.read_csv(file, index_col=0, parse_dates=True) for key, file in files.items()}
         # Calculate SMA indicator and store in self.data
         self.data['sma'] = sma(self.data['close'], period=self.param['sma_period'])
         

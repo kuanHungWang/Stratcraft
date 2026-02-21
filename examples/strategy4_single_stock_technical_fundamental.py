@@ -3,10 +3,10 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from typing import Dict, Any
-from decorators import broadcast, rolling, available
+from stratcraft.decorators import broadcast, rolling, available
 from indicators import sma, rsi
-from util import access_case_insensitive
-from metrics import Metrics
+from stratcraft import access_case_insensitive
+from stratcraft import Metrics
 START_DATE='2022-01-01'
 END_DATE='2023-12-31'
 class CustomStrategy(Strategy):
@@ -35,18 +35,16 @@ class CustomStrategy(Strategy):
             }
         
         # Load price data for our symbol
-        price_data = pd.read_csv(f"{self.param['symbol']}.csv", index_col=0, parse_dates=True)
+        files = {'close': 'open_AAPL.csv', 'high': 'high_AAPL.csv', 'low': 'low_AAPL.csv', 'open': 'open_AAPL.csv'}
+        self.data = {key: pd.read_csv(file, index_col=0, parse_dates=True) for key, file in files.items()}
 
-        # Store the price data in self.data
-        for item in price_data.keys():
-            self.data[item] = price_data[item]
         
         # Calculate technical indicators and store in self.data
         self.data['rsi'] = rsi(self.data['close'], period=self.param['rsi_period'])
         
         # Load fundamental data - EBITDA
         # Get fundamental data and filing dates
-        fundamental_data = get_fundamental(self.param['symbol'], ['is_ebitda', 'fillingDate'])
+        fundamental_data = pd.read_csv('AAPL.csv', index_col=0, parse_dates=['fillingDate'])
        # Important: Do not store the fundamental data in self.data as it has different index, may case warning and error.
         # Just use it as intermediate variable to calculate indicators, or use broadcast decorator to align index to daily price data.
  
@@ -57,8 +55,8 @@ class CustomStrategy(Strategy):
         
         # Calculate positive EBITDA growth indicator
         self.data['ebitda_growth_positive'] = is_ebitda_growth_positive(
-            fundamental_data['is_ebitda'][self.param['symbol']],
-            available_date=fundamental_data['fillingDate'][self.param['symbol']]
+            fundamental_data['is_ebitda'],
+            available_date=fundamental_data['fillingDate']
         )
         
         
